@@ -1,9 +1,9 @@
 package Controller;
 
 import io.javalin.Javalin;
-import io.javalin.http.Context;
+import io.javalin.http.*;
 import io.javalin.http.Handler;
-// import io.javalin.http.HttpStatus;
+//import io.javalin.http.HttpStatus;
 
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -12,8 +12,8 @@ import Model.Account;
 import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
-// import com.fasterxml.jackson.core.JsonProcessingException;
-// import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -21,6 +21,79 @@ import Service.MessageService;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
+
+    // private final ObjectMapper objectMapper;
+    // private final AccountService accountService;
+    // //private final MessageService messageService;
+
+    // public SocialMediaController() {
+    //     this.objectMapper = new ObjectMapper();
+    //     this.accountService = new AccountService();
+    //     //this.messageService = new MessageService();
+    // }
+
+    // public Javalin startAPI() {
+    //     Javalin app = Javalin.create();
+    //     app.post("/register", this::registrationHandler);
+    //     app.post("/login", this::loginHandler);
+    //     return app;
+    // }
+
+    // private void registrationHandler(Context context) throws JsonProcessingException {
+    //     Account account = objectMapper.readValue(context.body(), Account.class);
+    //     Optional<Account> registeredAccount = accountService.registration(account);
+
+    //     if (registeredAccount.isPresent()) {
+    //         context.status(HttpStatus.OK_200);  // Use HttpStatus constant
+    //         context.json(registeredAccount.get());
+    //     } else {
+    //         context.status(HttpStatus.BAD_REQUEST_400);  // Use HttpStatus constant
+    //         context.result("Registration failed.");
+    //     }
+    // }
+
+    // // private void registrationHandler(Context context) throws JsonProcessingException {
+    // //     Account account = objectMapper.readValue(context.body(), Account.class);
+    // //     Optional<Account> registeredAccount = accountService.registration(account);
+
+    // //     if (registeredAccount.isPresent()) {
+    // //         //context.status(HttpStatus.OK_200);
+    // //         context.status(200);
+    // //         context.json(registeredAccount.get());
+    // //     } else {
+    // //         context.status(400);
+    // //         //context.status(HttpStatus.BAD_REQUEST_400);
+    // //         context.result("Registration failed.");
+    // //     }
+    // // }
+
+    // private void loginHandler(Context context) throws JsonProcessingException {
+    //     Account account = objectMapper.readValue(context.body(), Account.class);
+    //     Optional<Account> loggedInAccount = accountService.login(account.getUsername(), account.getPassword());
+
+    //     if (loggedInAccount.isPresent()) {
+    //         context.status(HttpStatus.OK_200);  // Use HttpStatus constant
+    //         context.json(loggedInAccount.get());
+    //     } else {
+    //         context.status(HttpStatus.UNAUTHORIZED_401);  // Use HttpStatus constant
+    //         context.result("Login failed.");
+    //     }
+    // }
+    // // private void loginHandler(Context context) throws JsonProcessingException {
+    // //     Account account = objectMapper.readValue(context.body(), Account.class);
+    // //     Optional<Account> loggedInAccount = accountService.login(account.getUsername(), account.getPassword());
+
+    // //     if (loggedInAccount.isPresent()) {
+    // //         //context.status(HttpStatus.OK_200);
+    // //         context.status(200);
+    // //         context.json(loggedInAccount.get());
+    // //     } else {
+    // //         //context.status(HttpStatus.UNAUTHORIZED_401);
+    // //         context.status(401);
+    // //         context.result("Login failed.");
+    // //     }
+
+
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -29,11 +102,14 @@ public class SocialMediaController {
 
     AccountService accountService;
     MessageService messageService;
+    ObjectMapper objectMapper;
+    
 
 
     public SocialMediaController(){
         this.accountService = new AccountService();
         this.messageService = new MessageService();
+        this.objectMapper = new ObjectMapper();
     }
     
     public Javalin startAPI() {
@@ -44,10 +120,10 @@ public class SocialMediaController {
         app.post("/login", loginHandler);
         app.post("/messages", createMessageHandler);
         app.get("/messages", getAllMessagesHandler);
-        app.get("/messages/:message_id", getMessageByIdHandler);
-        app.delete("/messages/:message_id", deleteMessageByIdHandler);
-        app.patch("/messages/:message_id", updateMessageByIdHandler);
-        app.get("/accounts/account_id/messages", getMessageByUserHandler);
+        app.get("/messages/{message_id}", getMessageByIdHandler);
+        app.delete("/messages/{message_id}", deleteMessageByIdHandler);
+        app.patch("/messages/{message_id}", updateMessageByIdHandler);
+        app.get("/accounts/{account_id}/messages", getMessageByUserHandler);
         
         //endpoint to 
 
@@ -177,6 +253,5 @@ public class SocialMediaController {
         ctx.json(messageService.getMessageByUser(account_id));
     }
 
-
-
 }
+
