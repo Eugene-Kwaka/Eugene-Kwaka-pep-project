@@ -291,31 +291,3 @@ import Util.ConnectionUtil;
     }
 }
 
-// //     // userExists method for validation
-// //     // I count the number of users with a specified Id, if the count is 1, then the user exists in the DB
-// //     private boolean userExists(Connection connection, int account_id) throws SQLException {
-// //         String query = "SELECT COUNT(*) FROM account WHERE account_id = ?";
-// //         PreparedStatement preparedStatement = connection.prepareStatement(query);
-// //         preparedStatement.setInt(1, account_id);
-// //         ResultSet resultSet = preparedStatement.executeQuery();
-// //         if (resultSet.next()) {
-// //             int count = resultSet.getInt(1);
-// //             return count > 0;
-// //         }
-// //         return false;
-// //     }
-
-// //     // messageExists for validation
-// //     // I count the number of messages with a specified message_id, if the count is 1 then that means the message exists in the DB
-// //     private boolean messageExists(Connection connection, int message_id) throws SQLException {
-// //         String query = "SELECT COUNT(*) FROM message WHERE message_id = ?";
-// //         PreparedStatement preparedStatement = connection.prepareStatement(query);
-// //         preparedStatement.setInt(1, message_id);
-// //         ResultSet resultSet = preparedStatement.executeQuery();
-// //         if (resultSet.next()) {
-// //             int count = resultSet.getInt(1);
-// //             return count > 0;
-// //         }
-// //         return false;
-// //     }
-// }

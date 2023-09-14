@@ -114,7 +114,6 @@ public class SocialMediaController {
             ctx.status(HttpStatus.OK_200);
             ctx.json(Collections.emptyList());
         }
-        //ctx.json(messages);
     }
 
     private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
@@ -160,7 +159,7 @@ public class SocialMediaController {
     }
 
     private void getMessageByUserHandler(Context ctx) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        //ObjectMapper objectMapper = new ObjectMapper();
         int account_id = Integer.parseInt(ctx.pathParam("account_id"));
         List<Message> messages = messageService.getMessageByUser(account_id);
         if (!messages.isEmpty()) {
