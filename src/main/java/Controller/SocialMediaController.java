@@ -12,7 +12,7 @@ import Model.Account;
 import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
-//import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -22,78 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class SocialMediaController {
 
-    // private final ObjectMapper objectMapper;
-    // private final AccountService accountService;
-    // //private final MessageService messageService;
-
-    // public SocialMediaController() {
-    //     this.objectMapper = new ObjectMapper();
-    //     this.accountService = new AccountService();
-    //     //this.messageService = new MessageService();
-    // }
-
-    // public Javalin startAPI() {
-    //     Javalin app = Javalin.create();
-    //     app.post("/register", this::registrationHandler);
-    //     app.post("/login", this::loginHandler);
-    //     return app;
-    // }
-
-    // private void registrationHandler(Context context) throws JsonProcessingException {
-    //     Account account = objectMapper.readValue(context.body(), Account.class);
-    //     Optional<Account> registeredAccount = accountService.registration(account);
-
-    //     if (registeredAccount.isPresent()) {
-    //         context.status(HttpStatus.OK_200);  // Use HttpStatus constant
-    //         context.json(registeredAccount.get());
-    //     } else {
-    //         context.status(HttpStatus.BAD_REQUEST_400);  // Use HttpStatus constant
-    //         context.result("Registration failed.");
-    //     }
-    // }
-
-    // // private void registrationHandler(Context context) throws JsonProcessingException {
-    // //     Account account = objectMapper.readValue(context.body(), Account.class);
-    // //     Optional<Account> registeredAccount = accountService.registration(account);
-
-    // //     if (registeredAccount.isPresent()) {
-    // //         //context.status(HttpStatus.OK_200);
-    // //         context.status(200);
-    // //         context.json(registeredAccount.get());
-    // //     } else {
-    // //         context.status(400);
-    // //         //context.status(HttpStatus.BAD_REQUEST_400);
-    // //         context.result("Registration failed.");
-    // //     }
-    // // }
-
-    // private void loginHandler(Context context) throws JsonProcessingException {
-    //     Account account = objectMapper.readValue(context.body(), Account.class);
-    //     Optional<Account> loggedInAccount = accountService.login(account.getUsername(), account.getPassword());
-
-    //     if (loggedInAccount.isPresent()) {
-    //         context.status(HttpStatus.OK_200);  // Use HttpStatus constant
-    //         context.json(loggedInAccount.get());
-    //     } else {
-    //         context.status(HttpStatus.UNAUTHORIZED_401);  // Use HttpStatus constant
-    //         context.result("Login failed.");
-    //     }
-    // }
-    // // private void loginHandler(Context context) throws JsonProcessingException {
-    // //     Account account = objectMapper.readValue(context.body(), Account.class);
-    // //     Optional<Account> loggedInAccount = accountService.login(account.getUsername(), account.getPassword());
-
-    // //     if (loggedInAccount.isPresent()) {
-    // //         //context.status(HttpStatus.OK_200);
-    // //         context.status(200);
-    // //         context.json(loggedInAccount.get());
-    // //     } else {
-    // //         //context.status(HttpStatus.UNAUTHORIZED_401);
-    // //         context.status(401);
-    // //         context.result("Login failed.");
-    // //     }
-
-
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -102,28 +30,25 @@ public class SocialMediaController {
 
     AccountService accountService;
     MessageService messageService;
-    ObjectMapper objectMapper;
+    
     
 
 
     public SocialMediaController(){
         this.accountService = new AccountService();
         this.messageService = new MessageService();
-        this.objectMapper = new ObjectMapper();
     }
     
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        // app.get("example-endpoint", this::exampleHandler);
-
-        app.post("/register", registrationHandler);
-        app.post("/login", loginHandler);
-        app.post("/messages", createMessageHandler);
-        app.get("/messages", getAllMessagesHandler);
-        app.get("/messages/{message_id}", getMessageByIdHandler);
-        app.delete("/messages/{message_id}", deleteMessageByIdHandler);
-        app.patch("/messages/{message_id}", updateMessageByIdHandler);
-        app.get("/accounts/{account_id}/messages", getMessageByUserHandler);
+        app.post("/register", this::registrationHandler);
+        app.post("/login", this::loginHandler);
+        app.post("/messages", this::createMessageHandler);
+        app.get("/messages", this::getAllMessagesHandler);
+        app.get("/messages/{message_id}", this::getMessageByIdHandler);
+        app.delete("/messages/{message_id}", this::deleteMessageHandler);
+        app.patch("/messages/{message_id}", this::updateMessageHandler);
+        app.get("/accounts/{account_id}/messages", this::getMessageByUserHandler);
         
         //endpoint to 
 
@@ -134,123 +59,117 @@ public class SocialMediaController {
      * This is an example handler for an example endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
-    // private void exampleHandler(Context context) {
-    //     context.json("sample text");
-    // }
 
-    private Handler registrationHandler = ctx -> {
-        handleRegistration(ctx);
-    };
 
-    private Handler loginHandler = ctx -> {
-        handleLogin(ctx);
-    };
+    private void registrationHandler(Context ctx)  throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Account account = objectMapper.readValue(ctx.body(), Account.class);
+        System.out.println(account);
+        Account registeredAccount = accountService.registration(account);
+        System.out.println(registeredAccount);
 
-    private Handler createMessageHandler = ctx -> {
-        handleCreateMessage(ctx);
-    };
-
-    private Handler getAllMessagesHandler = ctx -> {
-        handleGetAllMessages(ctx);
-    };
-
-    private Handler getMessageByIdHandler = ctx -> {
-        handleGetMessageById(ctx);
-    };
-
-    private Handler deleteMessageByIdHandler = ctx -> {
-        handleDeleteMessage(ctx);
-    };
-
-    private Handler updateMessageByIdHandler = ctx -> {
-        handleUpdateMessage(ctx);
-    };
-
-    private Handler getMessageByUserHandler = ctx -> {
-        handleGetMessageByUser(ctx);
-    };
-
-    private void handleRegistration(Context ctx){
-        Account account = ctx.bodyAsClass(Account.class);
-        Optional<Account> registeredAccount = accountService.registration(account);
-
-        if (registeredAccount.isPresent()) {
+        if (registeredAccount != null) {
+            String jsonString = objectMapper.writeValueAsString(registeredAccount);
             ctx.status(HttpStatus.OK_200);
-            ctx.json(registeredAccount.get());
+            ctx.json(jsonString);
         } else {
             ctx.status(HttpStatus.BAD_REQUEST_400);
         }
         
     }
 
-    private void handleLogin(Context ctx) {
-        Account account = ctx.bodyAsClass(Account.class);
-        Optional<Account> loggedInAccount = accountService.login(account.getUsername(), account.getPassword());
+    private void loginHandler(Context ctx) throws JsonProcessingException{
+        ObjectMapper objectMapper = new ObjectMapper();
+        Account account = objectMapper.readValue(ctx.body(), Account.class);
+        Account loggedInAccount = accountService.login(account);
 
-        if (loggedInAccount.isPresent()) {
+        if (loggedInAccount != null) {
+            String jsonString = objectMapper.writeValueAsString(loggedInAccount);
             ctx.status(HttpStatus.OK_200);
-            ctx.json(loggedInAccount.get());
+            ctx.json(jsonString);
         } else {
             ctx.status(HttpStatus.UNAUTHORIZED_401);
         }
     }
 
-    private void handleCreateMessage(Context ctx) {
-        Message message = ctx.bodyAsClass(Message.class);
-        Optional<Message> createdMessage = messageService.createMessage(message);
-
-        if (createdMessage.isPresent()) {
+    private void createMessageHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Message message = objectMapper.readValue(ctx.body(), Message.class);
+        Message createdMessage = messageService.createMessage(message);
+        if (createdMessage != null) {
+            String jsonString = objectMapper.writeValueAsString(createdMessage);
             ctx.status(HttpStatus.OK_200);
-            ctx.json(createdMessage.get());
+            ctx.json(jsonString);
         } else {
             ctx.status(HttpStatus.BAD_REQUEST_400);
         }
     }
 
-    private void handleGetAllMessages(Context ctx) {
+    private void getAllMessagesHandler(Context ctx) {
         List<Message> messages = messageService.getAllMessages();
-        ctx.json(messages);
+        if (!messages.isEmpty()) {
+            ctx.status(HttpStatus.OK_200);
+            ctx.json(messages);
+        } else {
+            ctx.status(HttpStatus.OK_200);
+            ctx.json(Collections.emptyList());
+        }
+        //ctx.json(messages);
     }
 
-    private void handleGetMessageById(Context ctx) {
+    private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
-        Optional<Message> message = messageService.getMessageById(message_id);
+        Message message = messageService.getMessageById(message_id);
 
-        if (message.isPresent()) {
+        if (message != null) {
+            String jsonString = objectMapper.writeValueAsString(message);
             ctx.status(HttpStatus.OK_200);
-            ctx.json(message.get());
+            ctx.json(jsonString);
         } else {
-            ctx.status(HttpStatus.NOT_FOUND_404);
+            ctx.status(HttpStatus.OK_200);
+            ctx.result("");
         }
     }
 
-    private void handleDeleteMessage(Context ctx) {
+    private void deleteMessageHandler(Context ctx) throws JsonProcessingException{
+        ObjectMapper objectMapper = new ObjectMapper();
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
-        Optional<Message> deletedMessage = messageService.deleteMessageById(message_id);
-
-        if (deletedMessage.isPresent()) {
-            ctx.json(deletedMessage.get());
+        Message deletedMessage = messageService.deleteMessageById(message_id);
+        if (deletedMessage != null) {
+            String jsonString = objectMapper.writeValueAsString(deletedMessage);
+            ctx.json(jsonString);
         } else {
             ctx.status(200);
         }
     }
 
-    private void handleUpdateMessage(Context ctx) {
+    private void updateMessageHandler(Context ctx) throws JsonProcessingException{
+        ObjectMapper objectMapper = new ObjectMapper();
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
-        String newMessageText = ctx.body();
-        Optional<Message> updatedMessage = messageService.updateMessageById(message_id, newMessageText);
-
-        if (updatedMessage.isPresent()) {
+        Message msg = objectMapper.readValue(ctx.body(), Message.class);
+        String newMessageText = msg.getMessage_text();
+        Message updatedMessage = messageService.updateMessageById(message_id, newMessageText);
+        if (updatedMessage != null) {
+            String jsonString = objectMapper.writeValueAsString(updatedMessage);
             ctx.status(HttpStatus.OK_200);
-            ctx.json(updatedMessage.get());
+            ctx.json(jsonString);
         } else {
             ctx.status(HttpStatus.BAD_REQUEST_400);
         }
     }
 
-    private void handleGetMessageByUser(Context ctx) {
+    private void getMessageByUserHandler(Context ctx) {
+        ObjectMapper objectMapper = new ObjectMapper();
         int account_id = Integer.parseInt(ctx.pathParam("account_id"));
-        ctx.json(messageService.getMessageByUser(account_id));
+        List<Message> messages = messageService.getMessageByUser(account_id);
+        if (!messages.isEmpty()) {
+            ctx.status(HttpStatus.OK_200);
+            ctx.json(messages);
+        } else {
+            ctx.status(HttpStatus.OK_200);
+            ctx.json(Collections.emptyList());
+        }
     }
 
 }
